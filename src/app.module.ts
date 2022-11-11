@@ -10,6 +10,7 @@ import { UserModule } from './modules/user/user.module';
 import { QuestionModule } from './modules/question/question.module';
 import { ExamModule } from './modules/exam/exam.module';
 import { ExamHistory } from './modules/examHistory/entities/ExamHistory';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ExamHistory } from './modules/examHistory/entities/ExamHistory';
       entities: [Question,User,Exam,ExamHistory],
       synchronize: true,
       dropSchema: false
-    }), UserModule,QuestionModule,ExamModule
+    }),QuestionModule,ExamModule, AuthModule,UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

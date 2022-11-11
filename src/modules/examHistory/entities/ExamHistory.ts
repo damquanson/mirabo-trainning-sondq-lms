@@ -14,6 +14,7 @@ export class ExamHistory {
     score: number;
     @Column({default:20})
     testtime: number;
+    @Column()
     date:Date;
 
   

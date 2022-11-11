@@ -19,6 +19,9 @@ export class UserService {
   findOne(id: string): Promise<User> {
     return this.userRepo.findOneBy({ userId: parseInt(id) });
   }
+  async findOnename(email: string): Promise<User | undefined> {
+    return this.userRepo.findOneBy({email: email})
+  }
 
   update(id: number, updateUserDto: CreateUserDto) {
     updateUserDto['userId']=id;
