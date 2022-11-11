@@ -2,8 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Book } from './library/entities/book.entity';
-import { LibraryModule } from './library/library.module';
+import { Question } from './modules/question/entities/question.entity';
+import { User } from './modules/user/entities/user.entity';
+import { Exam } from './modules/exam/entities/exam.entity';
+
+import { UserModule } from './modules/user/user.module';
+import { QuestionModule } from './modules/question/question.module';
+import { ExamModule } from './modules/exam/exam.module';
+import { ExamHistory } from './modules/examHistory/entities/ExamHistory';
 
 @Module({
   imports: [
@@ -13,11 +19,11 @@ import { LibraryModule } from './library/library.module';
       port: 3306,
       username: 'root',
       password: '123456',
-      database: 'library',
-      entities: [Book],
+      database: 'lms',
+      entities: [Question,User,Exam,ExamHistory],
       synchronize: true,
       dropSchema: false
-    }), LibraryModule
+    }), UserModule,QuestionModule,ExamModule
   ],
   controllers: [AppController],
   providers: [AppService],

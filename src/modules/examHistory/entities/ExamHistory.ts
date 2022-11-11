@@ -1,19 +1,20 @@
 
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
-export class Book {
+export class ExamHistory {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    bookName: string;
+    idUser: number;
+    @Column()
+    idExam: number;
 
     @Column()
-    authorName: string;
+    score: number;
+    @Column({default:20})
+    testtime: number;
+    date:Date;
 
-    @Column()
-    publishYear: number;
-
-    @Column({ default: true})
-    isAvailable: boolean;
+  
 }
