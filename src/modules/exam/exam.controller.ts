@@ -8,10 +8,13 @@ import {
   Delete,
   Req,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+//@UseGuards(JwtAuthGuard)
 @Controller('exam')
 export class ExamController {
   constructor(private readonly examService: ExamService) {}
@@ -41,6 +44,10 @@ export class ExamController {
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.examService.findOne(id);
+  }
+  @Get('rank/:id')
+  rank(@Param('id') id: number) {
+    return this.examService.rank(id);
   }
 
   @Patch(':id')

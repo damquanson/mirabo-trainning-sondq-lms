@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Exam Rank</h1>
+    <ul id="myList"></ul>
+
+    <script>
+      // client lay data tu api
+      async function getData() {
+        let response = await fetch('http://127.0.0.1:3000/exam/rank/1');
+
+        let data = await response.json();
+
+        return data;
+      }
+
+      getData().then((data) => {
+        console.log(data);
+
+        let data1 = data.forEach((element, index) => {
+          var a = document.createElement('a');
+          var linkText = document.createTextNode(
+            `No.  ${index + 1} : ${element.username}: ${
+              element.score
+            }  point in ${element.testtime} mintutes    `,
+          );
+          a.appendChild(linkText);
+
+          document.getElementById('myList').appendChild(a);
+
+          var br = document.createElement('br');
+          document.getElementById('myList').appendChild(br);
+          document.getElementById('myList').appendChild(br);
+        });
+      });
+    </script>
+  </body>
+</html>

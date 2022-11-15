@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    
+    <h1>Do Exam </h1>
+    <p id="title"> </p>
+    <form id="myList" method="post" onsubmit="getResult()" ></form>
+    
+    <script>  async function getResult() {
+      const options = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: new FormData(myList)
+    };
+    
+      let response= await fetch('http://127.0.0.1:3000/exam/result/1/1', options);
+    
+      let data = await response.json()
+      return data
+    }
+    
+    
+    getResult().then(data => {
+      console.log(data);
+      // thay doi ui tu du lieu nhan duoc
+      document.getElementById('title').innerHTML = ` Your Score: ${data}` ;
+    }) </script>
+    <script>
+      // client lay data tu api
+      async function getData() {
+        let response = await fetch('http://127.0.0.1:3000/exam/doexam/3');
+
+        let data = await response.json();
+
+        return data;
+      }
+
+      getData().then((data) => {
+        var br = document.createElement('br');
+
+        let data1 = data.forEach((element, index) => {
+          var a = document.createElement('p');
+          var linkText = document.createTextNode(
+            `QuestionNo. ${index + 1} :${element.questionname}    `,
+          );
+          a.appendChild(linkText);
+
+          document.getElementById('myList').appendChild(a);
+          
+          var label = document.createElement('label');
+          label.innerHTML = `${element.answer1}`;   
+          document.getElementById('myList').appendChild(label);
+          var inputDom = document.createElement("INPUT");
+          inputDom.setAttribute("type", "radio");
+          inputDom.setAttribute("value","1")
+          inputDom.setAttribute("name",`${element.id}`)
+          document.getElementById('myList').appendChild(inputDom);
+          document.getElementById('myList').appendChild(br);
+
+          var label = document.createElement('label');
+          label.innerHTML = `${element.answer2}`;   
+          document.getElementById('myList').appendChild(label);
+          var x = document.createElement("INPUT");
+          x.setAttribute("type", "radio");
+          x.setAttribute("value","2")
+          x.setAttribute("name",`${element.id}`)
+          document.getElementById('myList').appendChild(x);
+          document.getElementById('myList').appendChild(br);
+
+          var label = document.createElement('label');
+          label.innerHTML = `${element.answer3}`;   
+          document.getElementById('myList').appendChild(label);
+          var x = document.createElement("INPUT");
+          x.setAttribute("type", "radio");
+          x.setAttribute("value","3")
+          x.setAttribute("name",`${element.id}`)
+          document.getElementById('myList').appendChild(x);
+
+          
+
+
+          
+          document.getElementById('myList').appendChild(br);
+        });
+        document.getElementById('myList').appendChild(br);
+        let btn=document.createElement('input');
+          btn.setAttribute("type","submit");
+          btn.setAttribute("value","Submit")
+          btn.setAttribute("onclick","getResult()")
+          document.getElementById('myList').appendChild(btn);
+      });
+    </script>
+
+
+
+  </body>
+</html>

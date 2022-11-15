@@ -21,10 +21,8 @@ export class ExamService {
 
   async findOne(id: number) {
     let exam = await this.examRepository.findOneBy({ examId: id });
-    let rank = await this.rank(id);
-    let res = { exam, rank };
-    console.log(exam);
-    return res;
+
+    return exam;
   }
 
   create(createExamDto: CreateExamDto) {
@@ -82,16 +80,42 @@ export class ExamService {
       .createQueryBuilder()
       .insert()
       .into(ExamHistory)
-      .values([{ idUser: idu, idExam: ide, score: point, date: Date.now() }])
+      .values([{ idUser: idu, idExam: ide, score: point }])
       .execute();
     return point;
   }
   async rank(ide: number) {
-    const rank = await this.dataSource.manager
+    var data = this.dataSource;
+    let rank1 = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
       .where('examhistory.idExam =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
-    return rank;
+    let rank = await this.dataSource.manager
+      .createQueryBuilder(User, 'user')
+
+      .leftJoinAndSelect(
+        ExamHistory,
+        'examhistory',
+        'user.userId=examhistory.idUser',
+      )
+      .where('examhistory.idExam =:score', { score: ide })
+      .orderBy('score', 'DESC')
+      .getMany();
+    //   Array.from(rank).forEach( async function (element,index)  {
+    //    const user =  await data.manager
+    //   .createQueryBuilder(User, 'user')
+    //   .where('user.userId =:var', { var: element.idUser })
+    //   .getOne();
+
+    //    element["userName"]=user.username;
+
+    // }); 
+    rank1.forEach(element => {
+      let user=rank.find(function(a) {return element.idUser==a.userId})
+     element['username']=user.username;
+    });
+
+    return rank1;
   }
 }

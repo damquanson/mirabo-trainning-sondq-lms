@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body onload="getData()">
+    <h1>Exam List</h1>
+    <ul id="myList"></ul>
+
+    <script>
+      // client lay data tu api
+      async function getData() {
+        let response = await fetch('http://127.0.0.1:3000/exam')
+
+        let data = await response.json();
+        console.log(data);
+        let data1 = data.forEach((element,index) => {
+        
+         
+          var a = document.createElement('a');
+      var linkText = document.createTextNode(`Exam  ${index+1} :${element.examName}    `);
+      a.appendChild(linkText);
+      
+      
+      document.getElementById('myList').appendChild(a);
+      var b = document.createElement('a');
+      var linkText = document.createTextNode(" Do Exam");
+      b.appendChild(linkText);
+      b.title = `${element.examName}`;
+      b.href = `file:///D:/traning/mirabo-traning-sondq/view/doexam.html`;
+      document.getElementById('myList').appendChild(b);
+
+
+      var c = document.createElement('a');
+      var linkText = document.createTextNode(`                                     Rank`);
+      c.appendChild(linkText);
+      c.href = `file:///D:/traning/mirabo-traning-sondq/view/rankExam.html`;
+      document.getElementById('myList').appendChild(c);
+
+      var br = document.createElement("br");
+      document.getElementById('myList').appendChild(br);
+      document.getElementById('myList').appendChild(br);
+        });
+      }
+
+      // getData().then((data) => {
+      
+
+      //   // thay doi ui tu du lieu nhan duoc
+      //   document.getElementById('title').innerHTML = data;
+      // });
+
+   
+    </script>
+  </body>
+</html>
