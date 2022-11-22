@@ -26,6 +26,7 @@ export class QuestionService {
   }
 
   update(id: number, updateQuestionDto: CreateQuestionDto) {
+    updateQuestionDto['id']=id;
     return this.questionRepository.save(updateQuestionDto);
   }
 

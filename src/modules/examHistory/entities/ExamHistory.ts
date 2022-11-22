@@ -7,9 +7,9 @@ export class ExamHistory {
     id: number;
 
     @Column()
-    idUser: number;
+    userId: number;
     @Column()
-    idExam: number;
+    examId: number;
 
     @Column()
     score: number;

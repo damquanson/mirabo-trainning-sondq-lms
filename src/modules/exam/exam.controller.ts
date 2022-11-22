@@ -21,7 +21,7 @@ export class ExamController {
 
   @Get('doexam/:id')
   doexam(@Param('id') id: string) {
-    return this.examService.doExam1(parseInt(id));
+    return this.examService.doExam(parseInt(id));
   }
   @Post('result/:ide/:idu')
   getResult(
@@ -59,4 +59,9 @@ export class ExamController {
   remove(@Param('id') id: string) {
     return this.examService.remove(+id);
   }
+  @Get('history/:id')
+  getHistory(@Param('id') id:number) {
+    return this.examService.getHistory(id);
+  }
+
 }

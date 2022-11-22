@@ -24,7 +24,7 @@ export class ExamService {
 
     return exam;
   }
-
+  
   create(createExamDto: CreateExamDto) {
     return this.examRepository.save(createExamDto);
   }
@@ -46,8 +46,8 @@ export class ExamService {
     return myset;
   }
 
-  //Lam bai theo id de, ngau nhien 4 cau hoi
-  async doExam1(id: number) {
+  //Lam bai theo id de, ngau nhien ham tra ve 4 cau hoi
+  async doExam(id: number) {
     const question1 = await this.dataSource.manager
       .createQueryBuilder(Question, 'question')
       .where('question.examId = :id1', { id1: id })
@@ -63,6 +63,7 @@ export class ExamService {
     console.log(q3);
     return q4;
   }
+
   async getResult(ide: number, idu: number, Body) {
     let point = 0;
     for (var key in Body) {
@@ -80,15 +81,23 @@ export class ExamService {
       .createQueryBuilder()
       .insert()
       .into(ExamHistory)
-      .values([{ idUser: idu, idExam: ide, score: point }])
+      .values([{ userId: idu, examId: ide, score: point }])
       .execute();
     return point;
+  }
+  async getHistory(id:number) {
+    let history =  await this.dataSource.manager
+    .createQueryBuilder(ExamHistory, 'examhistory')
+    .where('examhistory.userId=:userid',{userid:id})
+    .getMany()
+    console.log(history);
+    return history;
   }
   async rank(ide: number) {
     var data = this.dataSource;
     let rank1 = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
-      .where('examhistory.idExam =:score', { score: ide })
+      .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
     let rank = await this.dataSource.manager
@@ -97,25 +106,18 @@ export class ExamService {
       .leftJoinAndSelect(
         ExamHistory,
         'examhistory',
-        'user.userId=examhistory.idUser',
+        'user.userId=examhistory.userId',
       )
-      .where('examhistory.idExam =:score', { score: ide })
+      .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
-    //   Array.from(rank).forEach( async function (element,index)  {
-    //    const user =  await data.manager
-    //   .createQueryBuilder(User, 'user')
-    //   .where('user.userId =:var', { var: element.idUser })
-    //   .getOne();
-
-    //    element["userName"]=user.username;
-
-    // }); 
+   
     rank1.forEach(element => {
-      let user=rank.find(function(a) {return element.idUser==a.userId})
+      let user=rank.find(function(a) {return element.userId==a.userId})
      element['username']=user.username;
     });
 
     return rank1;
   }
+  
 }
