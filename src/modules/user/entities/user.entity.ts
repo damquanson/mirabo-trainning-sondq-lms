@@ -14,8 +14,7 @@ export class User {
     password: string;
     @Column({default:30})
     role: number;
-    @OneToMany((type) => ExamHistory, (examHistory) => examHistory.userId)
-    examHistory: ExamHistory[]
+    
     
 
   
