@@ -15,10 +15,24 @@ export class ExamService {
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
-  findAll(): Promise<Exam[]> {
-    return this.examRepository.find();
-  }
+  async findAll(query) {
+    const take = query.take;
+    const page = query.page;
+    const skip = (page - 1) * take;
+    const keyword = query.keyword || '';
+    console.log(take);
+    console.log(page);
+    const [result, total] = await this.examRepository.findAndCount({
+      // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
+      take: take,
+      skip: skip,
+    });
 
+    return {
+      data: result,
+      count: total,
+    };
+  }
   async findOne(id: number): Promise<Exam> {
     let exam = await this.examRepository.findOneBy({ examId: id });
 
@@ -35,11 +49,11 @@ export class ExamService {
   remove(id: number): Promise<DeleteResult> {
     return this.examRepository.delete(id);
   }
-  // ham tra ve 1 set gom 4 phan tu random giua 2 so nguyen n va m
-  getRandom(n, m): Set<any> {
-    const myset = new Set();
+  // ham tra ve 1 set gom 4 phan tu random giua 2 so nguyen start va end
+  getRandom(start, end): Set<number> {
+    const myset = new Set<number>();
     for (let i = 0; i < 20; i++) {
-      let num = Math.floor(Math.random() * (m + 1 - n)) + n;
+      let num = Number(Math.floor(Math.random() * (end + 1 - start)) + start);
       myset.add(num);
       if (myset.size == 4) break;
     }
@@ -95,7 +109,7 @@ export class ExamService {
   }
   async rank(ide: number): Promise<ExamHistory[]> {
     var data = this.dataSource;
-    let rank1 = await this.dataSource.manager
+    let listrank = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
       .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
@@ -112,13 +126,13 @@ export class ExamService {
       .orderBy('score', 'DESC')
       .getMany();
 
-    rank1.forEach((element) => {
+    listrank.forEach((element) => {
       let user = rank.find(function (a) {
         return element.userId == a.userId;
       });
       element['username'] = user.username;
     });
 
-    return rank1;
+    return listrank;
   }
 }

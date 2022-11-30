@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  ValidationPipe,
+  UsePipes,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,13 +23,21 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  findAll(@Query('page') page: number) {
+    let query = {
+      keyword: '',
+      take: 5, // so luong ket qua trong 1 trang
+      page: page,
+    };
+
+    console.log(page);
+    return this.userService.findAll(query);
   }
 
   @Get(':id')

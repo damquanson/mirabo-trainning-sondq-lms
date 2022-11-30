@@ -1,5 +1,12 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+} from 'class-validator/types/decorator/decorators';
 export class CreateExamDto {
-    examName:string;
-    timeLimit:number;
-    subjectId:number;
+  @IsNotEmpty()
+  examName: string;
+  @IsNotEmpty()
+  timeLimit: number;
+  @IsNotEmpty()
+  subjectId: number;
 }

@@ -9,6 +9,7 @@ import {
   Req,
   Request,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
@@ -41,8 +42,13 @@ export class ExamController {
   }
 
   @Get()
-  findAll(): Promise<Exam[]> {
-    return this.examService.findAll();
+  findAll(@Query('page') page:number  ) {
+    let query={
+      keyword:"",
+      take:5,
+      page:page
+    }
+    return this.examService.findAll(query);
   }
 
   @Get(':id')

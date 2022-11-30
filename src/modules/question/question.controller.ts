@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -24,8 +25,13 @@ export class QuestionController {
   }
 
   @Get()
-  findAll(): Promise<Question[]> {
-    return this.questionService.findAll();
+  findAll(@Query('page') page: number) {
+    let query = {
+      keyword: '',
+      take: 5, // so luong ket qua trong 1 trang
+      page: page,
+    };
+    return this.questionService.findAll(query);
   }
 
   @Get(':id')
@@ -40,10 +46,4 @@ export class QuestionController {
   ): Promise<Question> {
     return this.questionService.update(+id, updateQuestionDto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string): Promise<Question> {
-  //   return this.questionService.remove(+id);
-  // }
-  
 }
