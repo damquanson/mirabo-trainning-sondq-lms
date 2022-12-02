@@ -29,11 +29,11 @@ export class ExamController {
   }
   @Post('result/:ide/:idu')
   getResult(
-    @Param('ide') ide: number,
-    @Param('idu') idu: number,
+    @Param('ide') idExam: number,
+    @Param('idu') idUser: number,
     @Body() Body,
   ): Promise<number> {
-    return this.examService.getResult(ide, idu, Body);
+    return this.examService.getResult(idExam, idUser, Body);
   }
   @Post()
   create(@Body() createExamDto: CreateExamDto): Promise<Exam> {

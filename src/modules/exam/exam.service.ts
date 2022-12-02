@@ -19,8 +19,7 @@ export class ExamService {
     const take = query.take;
     const page = query.page;
     const skip = (page - 1) * take;
-    console.log(take);
-    console.log(page);
+
     const [result, total] = await this.examRepository.findAndCount({
       // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
       take: take,
@@ -77,7 +76,7 @@ export class ExamService {
     return q4;
   }
 
-  async getResult(ide: number, idu: number, Body): Promise<number> {
+  async getResult(idExam: number, idUser: number, Body): Promise<number> {
     let point = 0;
     for (const key in Body) {
       if (Body.hasOwnProperty(key)) {
@@ -94,7 +93,7 @@ export class ExamService {
       .createQueryBuilder()
       .insert()
       .into(ExamHistory)
-      .values([{ userId: idu, examId: ide, score: point }])
+      .values([{ userId: idUser, examId: idExam, score: point }])
       .execute();
     return point;
   }

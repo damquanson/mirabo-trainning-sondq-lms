@@ -26,8 +26,7 @@ export class UserService {
     const page = query.page;
     const skip = (page - 1) * take;
 
-    console.log(take);
-    console.log(page);
+    
     const [result, total] = await this.userRepo.findAndCount({
       // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
       take: take,
