@@ -1,7 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
-} from 'class-validator/types/decorator/decorators';
+} from 'class-validator';
 export class CreateExamDto {
   @IsNotEmpty()
   examName: string;

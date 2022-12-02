@@ -1,5 +1,5 @@
 export class ResponseUserDto {
-    username:string;
+    userName:string;
     email:string;
     role:number;
 }

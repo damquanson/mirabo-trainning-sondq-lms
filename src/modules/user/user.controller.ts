@@ -30,13 +30,12 @@ export class UserController {
 
   @Get()
   findAll(@Query('page') page: number) {
-    let query = {
+    const query = {
       keyword: '',
       take: 5, // so luong ket qua trong 1 trang
       page: page,
     };
 
-    console.log(page);
     return this.userService.findAll(query);
   }
 

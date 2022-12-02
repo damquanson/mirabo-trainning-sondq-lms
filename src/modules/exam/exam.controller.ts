@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Question } from '../question/entities/question.entity';
 import { Exam } from './entities/exam.entity';
 import { ExamHistory } from '../examHistory/entities/ExamHistory';
@@ -42,12 +41,12 @@ export class ExamController {
   }
 
   @Get()
-  findAll(@Query('page') page:number  ) {
-    let query={
-      keyword:"",
-      take:5,
-      page:page
-    }
+  findAll(@Query('page') page: number) {
+    const query = {
+      keyword: '',
+      take: 5,
+      page: page,
+    };
     return this.examService.findAll(query);
   }
 

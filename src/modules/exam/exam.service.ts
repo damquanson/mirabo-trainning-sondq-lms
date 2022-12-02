@@ -19,7 +19,6 @@ export class ExamService {
     const take = query.take;
     const page = query.page;
     const skip = (page - 1) * take;
-    const keyword = query.keyword || '';
     console.log(take);
     console.log(page);
     const [result, total] = await this.examRepository.findAndCount({
@@ -34,7 +33,7 @@ export class ExamService {
     };
   }
   async findOne(id: number): Promise<Exam> {
-    let exam = await this.examRepository.findOneBy({ examId: id });
+    const exam = await this.examRepository.findOneBy({ examId: id });
 
     return exam;
   }
@@ -53,7 +52,7 @@ export class ExamService {
   getRandom(start, end): Set<number> {
     const myset = new Set<number>();
     for (let i = 0; i < 20; i++) {
-      let num = Number(Math.floor(Math.random() * (end + 1 - start)) + start);
+      const num = Number(Math.floor(Math.random() * (end + 1 - start)) + start);
       myset.add(num);
       if (myset.size == 4) break;
     }
@@ -66,11 +65,11 @@ export class ExamService {
       .createQueryBuilder(Question, 'question')
       .where('question.examId = :id1', { id1: id })
       .getMany();
-    let q2 = this.getRandom(0, question1.length - 1);
-    let q3 = Array.from(q2);
-    let q4 = [];
+    const q2 = this.getRandom(0, question1.length - 1);
+    const q3 = Array.from(q2);
+    const q4 = [];
     for (let i = 0; i < 4; i++) {
-      let q5 = parseInt('' + q3[i]);
+      const q5 = parseInt('' + q3[i]);
       q4.push(question1[q5]);
     }
 
@@ -80,15 +79,15 @@ export class ExamService {
 
   async getResult(ide: number, idu: number, Body): Promise<number> {
     let point = 0;
-    for (var key in Body) {
+    for (const key in Body) {
       if (Body.hasOwnProperty(key)) {
-        let value = Body[key];
+        const value = Body[key];
 
         const question1 = await this.dataSource.manager
           .createQueryBuilder(Question, 'question')
-          .where('question.id = :id1', { id1: key })
+          .where('question.id = :id', { id: key })
           .getOne();
-        if (value == question1.correctanswer) point++;
+        if (value == question1.correctAnswer) point++;
       }
     }
     const q2 = await this.dataSource
@@ -100,21 +99,21 @@ export class ExamService {
     return point;
   }
   async getHistory(id: number): Promise<ExamHistory[]> {
-    let history = await this.dataSource.manager
+    const history = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
-      .where('examhistory.userId=:userid', { userid: id })
+      .where('examhistory.userId=:userId', { userId: id })
       .getMany();
     console.log(history);
     return history;
   }
   async rank(ide: number): Promise<ExamHistory[]> {
-    var data = this.dataSource;
-    let listrank = await this.dataSource.manager
+    const data = this.dataSource;
+    const listrank = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
       .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
-    let rank = await this.dataSource.manager
+    const rank = await this.dataSource.manager
       .createQueryBuilder(User, 'user')
 
       .leftJoinAndSelect(
@@ -127,10 +126,10 @@ export class ExamService {
       .getMany();
 
     listrank.forEach((element) => {
-      let user = rank.find(function (a) {
+      const user = rank.find(function (a) {
         return element.userId == a.userId;
       });
-      element['username'] = user.username;
+      element['username'] = user.userName;
     });
 
     return listrank;

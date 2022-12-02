@@ -16,30 +16,29 @@ export class UserService {
     const saltOrRounds = await genSalt();
     const passwordTemp = await hash(createUserDto.password, saltOrRounds);
     createUserDto.password = passwordTemp;
-    let user = await this.userRepo.save(createUserDto);
+    const user = await this.userRepo.save(createUserDto);
     const { password, ...result } = user;
     return result;
   }
 
   async findAll(query) {
     const take = query.take;
-    const page=query.page;
-    const skip= (page-1) * take ;
-    
-  console.log(take);
-  console.log(page);
-    const [result, total] = await this.userRepo.findAndCount(
-        {
-            // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
-            take: take,
-            skip: skip
-        }
-    );
+    const page = query.page;
+    const skip = (page - 1) * take;
+
+    console.log(take);
+    console.log(page);
+    const [result, total] = await this.userRepo.findAndCount({
+      // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
+      take: take,
+      skip: skip,
+    });
 
     return {
-        data: result,
-        count: total
-    }}
+      data: result,
+      count: total,
+    };
+  }
 
   async findOne(id: string): Promise<User> {
     return await this.userRepo.findOneBy({ userId: parseInt(id) });

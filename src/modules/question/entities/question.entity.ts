@@ -6,9 +6,9 @@ export class Question {
     id: number;
 
     @Column()
-    questionname: string;
+    questionName: string;
     @Column()
-    difficultlevel: number;
+    difficultLevel: number;
 
     @Column()
     answer1: string;
@@ -18,7 +18,7 @@ export class Question {
     @Column()
     answer3: string;
     @Column()
-    correctanswer: number;
+    correctAnswer: number;
     @Column()
     examId: number;
     @Column({ default: true})
