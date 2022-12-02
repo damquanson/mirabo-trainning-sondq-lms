@@ -15,31 +15,43 @@ export class ExamService {
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
-  findAll(): Promise<Exam[]> {
-    return this.examRepository.find();
-  }
+  async findAll(query) {
+    const take = query.take;
+    const page = query.page;
+    const skip = (page - 1) * take;
 
-  async findOne(id: number) {
-    let exam = await this.examRepository.findOneBy({ examId: id });
+    const [result, total] = await this.examRepository.findAndCount({
+      // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
+      take: take,
+      skip: skip,
+    });
+
+    return {
+      data: result,
+      count: total,
+    };
+  }
+  async findOne(id: number): Promise<Exam> {
+    const exam = await this.examRepository.findOneBy({ examId: id });
 
     return exam;
   }
-  
-  create(createExamDto: CreateExamDto) {
+
+  create(createExamDto: CreateExamDto): Promise<Exam> {
     return this.examRepository.save(createExamDto);
   }
-  update(id: number, createExamDto: CreateExamDto) {
+  update(id: number, createExamDto: CreateExamDto): Promise<Exam> {
     createExamDto['examId'] = id;
     return this.examRepository.save(createExamDto);
   }
   remove(id: number): Promise<DeleteResult> {
     return this.examRepository.delete(id);
   }
-  // ham tra ve 1 set gom 4 phan tu random giua 2 so nguyen n va m
-  getRandom(n, m) {
-    const myset = new Set();
+  // ham tra ve 1 set gom 4 phan tu random giua 2 so nguyen start va end
+  getRandom(start, end): Set<number> {
+    const myset = new Set<number>();
     for (let i = 0; i < 20; i++) {
-      let num = Math.floor(Math.random() * (m + 1 - n)) + n;
+      const num = Number(Math.floor(Math.random() * (end + 1 - start)) + start);
       myset.add(num);
       if (myset.size == 4) break;
     }
@@ -47,16 +59,16 @@ export class ExamService {
   }
 
   //Lam bai theo id de, ngau nhien ham tra ve 4 cau hoi
-  async doExam(id: number) {
+  async doExam(id: number): Promise<Question[]> {
     const question1 = await this.dataSource.manager
       .createQueryBuilder(Question, 'question')
       .where('question.examId = :id1', { id1: id })
       .getMany();
-    let q2 = this.getRandom(0, question1.length - 1);
-    let q3 = Array.from(q2);
-    let q4 = [];
+    const q2 = this.getRandom(0, question1.length - 1);
+    const q3 = Array.from(q2);
+    const q4 = [];
     for (let i = 0; i < 4; i++) {
-      let q5 = parseInt('' + q3[i]);
+      const q5 = parseInt('' + q3[i]);
       q4.push(question1[q5]);
     }
 
@@ -64,17 +76,17 @@ export class ExamService {
     return q4;
   }
 
-  async getResult(ide: number, idu: number, Body) {
+  async getResult(ide: number, idu: number, Body): Promise<number> {
     let point = 0;
-    for (var key in Body) {
+    for (const key in Body) {
       if (Body.hasOwnProperty(key)) {
-        let value = Body[key];
+        const value = Body[key];
 
         const question1 = await this.dataSource.manager
           .createQueryBuilder(Question, 'question')
-          .where('question.id = :id1', { id1: key })
+          .where('question.id = :id', { id: key })
           .getOne();
-        if (value == question1.correctanswer) point++;
+        if (value == question1.correctAnswer) point++;
       }
     }
     const q2 = await this.dataSource
@@ -85,22 +97,22 @@ export class ExamService {
       .execute();
     return point;
   }
-  async getHistory(id:number) {
-    let history =  await this.dataSource.manager
-    .createQueryBuilder(ExamHistory, 'examhistory')
-    .where('examhistory.userId=:userid',{userid:id})
-    .getMany()
+  async getHistory(id: number): Promise<ExamHistory[]> {
+    const history = await this.dataSource.manager
+      .createQueryBuilder(ExamHistory, 'examhistory')
+      .where('examhistory.userId=:userId', { userId: id })
+      .getMany();
     console.log(history);
     return history;
   }
-  async rank(ide: number) {
-    var data = this.dataSource;
-    let rank1 = await this.dataSource.manager
+  async rank(ide: number): Promise<ExamHistory[]> {
+    const data = this.dataSource;
+    const listrank = await this.dataSource.manager
       .createQueryBuilder(ExamHistory, 'examhistory')
       .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
-    let rank = await this.dataSource.manager
+    const rank = await this.dataSource.manager
       .createQueryBuilder(User, 'user')
 
       .leftJoinAndSelect(
@@ -111,13 +123,14 @@ export class ExamService {
       .where('examhistory.examId =:score', { score: ide })
       .orderBy('score', 'DESC')
       .getMany();
-   
-    rank1.forEach(element => {
-      let user=rank.find(function(a) {return element.userId==a.userId})
-     element['username']=user.username;
+
+    listrank.forEach((element) => {
+      const user = rank.find(function (a) {
+        return element.userId == a.userId;
+      });
+      element['username'] = user.userName;
     });
 
-    return rank1;
+    return listrank;
   }
-  
 }

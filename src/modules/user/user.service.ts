@@ -3,33 +3,55 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 
+import { ResponseUserDto } from './dto/response-user.dto';
+
 import { User } from './entities/user.entity';
+import { genSalt, hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
-  create(createUserDto: CreateUserDto) {
-    return this.userRepo.save(createUserDto);
+
+  async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
+    const saltOrRounds = await genSalt();
+    const passwordTemp = await hash(createUserDto.password, saltOrRounds);
+    createUserDto.password = passwordTemp;
+    const user = await this.userRepo.save(createUserDto);
+    const { password, ...result } = user;
+    return result;
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepo.find();
-  }
+  async findAll(query) {
+    const take = query.take;
+    const page = query.page;
+    const skip = (page - 1) * take;
 
-  findOne(id: string): Promise<User> {
-    return this.userRepo.findOneBy({ userId: parseInt(id) });
-  }
-   findOnename(email: string): Promise<User> {
     
-    return  this.userRepo.findOneBy({email: email})
+    const [result, total] = await this.userRepo.findAndCount({
+      // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
+      take: take,
+      skip: skip,
+    });
+
+    return {
+      data: result,
+      count: total,
+    };
   }
 
-  update(id: number, updateUserDto: CreateUserDto) {
-    updateUserDto['userId']=id;
-    return this.userRepo.save(updateUserDto);
+  async findOne(id: string): Promise<User> {
+    return await this.userRepo.findOneBy({ userId: parseInt(id) });
+  }
+  async findOneName(email: string): Promise<User> {
+    return await this.userRepo.findOneBy({ email: email });
   }
 
-  remove(id: number): Promise<DeleteResult> {
-    return this.userRepo.delete(id);
+  async update(id: number, updateUserDto: CreateUserDto): Promise<User> {
+    updateUserDto['userId'] = id;
+    return await this.userRepo.save(updateUserDto);
+  }
+
+  async remove(id: number): Promise<DeleteResult> {
+    return await this.userRepo.delete(id);
   }
 }

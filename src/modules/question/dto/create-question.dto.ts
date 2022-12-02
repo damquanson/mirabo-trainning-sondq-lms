@@ -1,10 +1,20 @@
+import { IsInt, IsNotEmpty, Length, Max, Min } from 'class-validator';
+
 export class CreateQuestionDto {
-    questionname:string;
-    difficultlevel:number;
-    answer1:string;
-    answer2:string;
-    answer3:string;
-    correctanswer:number;
-    
- 
+  @IsNotEmpty()
+  questionName: string;
+  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  @Max(3)
+  difficultLevel: number;
+  @IsNotEmpty()
+  @Length(5, 10)
+  answer1: string;
+  @IsNotEmpty()
+  answer2: string;
+  @IsNotEmpty()
+  answer3: string;
+  @IsNotEmpty()
+  correctAnswer: number;
 }

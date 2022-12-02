@@ -7,15 +7,14 @@ export class User {
     userId: number;
 
     @Column()
-    username: string;
+    userName: string;
     @Column()
     email: string;
     @Column()
     password: string;
     @Column({default:30})
     role: number;
-    @OneToMany((type) => ExamHistory, (examHistory) => examHistory.userId)
-    examHistory: ExamHistory[]
+    
     
 
   

@@ -11,20 +11,27 @@ import { QuestionModule } from './modules/question/question.module';
 import { ExamModule } from './modules/exam/exam.module';
 import { ExamHistory } from './modules/examHistory/entities/ExamHistory';
 import { AuthModule } from './auth/auth.module';
-
+require('dotenv').config();
+import { PostRefactoring1669709884520 } from './migrations/1669709884520-PostRefactoring';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '123456',
-      database: 'lms',
-      entities: [Question,User,Exam,ExamHistory],
-      synchronize: true,
-      dropSchema: false
-    }),QuestionModule,ExamModule, AuthModule,UserModule
+      host: process.env.HOST,
+      port: Number(process.env.PORT),
+      username: process.env.DBUSERNAME,
+      password: process.env.PASSWORD,
+      database: process.env.DATABASE,
+      entities: [Question, User, Exam, ExamHistory],
+      migrations: [PostRefactoring1669709884520],
+      migrationsTableName: 'migrations',
+      synchronize: false,
+      dropSchema: false,
+    }),
+    QuestionModule,
+    ExamModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
