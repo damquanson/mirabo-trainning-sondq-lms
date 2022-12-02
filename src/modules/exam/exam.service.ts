@@ -19,8 +19,7 @@ export class ExamService {
     const take = query.take;
     const page = query.page;
     const skip = (page - 1) * take;
-    console.log(take);
-    console.log(page);
+
     const [result, total] = await this.examRepository.findAndCount({
       // where: { questionname: Like('%' + keyword + '%') }, //order: { questionname: "DESC" },
       take: take,
